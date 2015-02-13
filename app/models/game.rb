@@ -5,6 +5,7 @@ class Game < ActiveRecord::Base
 
 
 
+<<<<<<< HEAD
   def initialize(creating_player)
   	@turncount = 0
   	@board = [['o', 'o', 'o', 'o', 'o', 'o'],
@@ -164,6 +165,9 @@ class Game < ActiveRecord::Base
   	else
   		return false
   	end
+=======
+  def display_board
+>>>>>>> ea92043b6e35cf946580ebfde99d335cf1d3e7d9
   end
 
   def end_of_turn
