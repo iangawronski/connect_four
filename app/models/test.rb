@@ -5,8 +5,7 @@ class Game < ActiveRecord::Base
 
 
 
-<<<<<<< HEAD
-  def initialize(creating_player)
+  def initialize
   	@turncount = 0
   	@board = [['o', 'o', 'o', 'o', 'o', 'o'],
   	 		  ['o', 'o', 'o', 'o', 'o', 'o'],
@@ -24,7 +23,7 @@ class Game < ActiveRecord::Base
   # perhaps this is used to build how the board is supposed to look and then it hands that to the controller?
   # ASK BRIT!
   def display_board(board)
-  	# TODO: find a way to format the board! 
+  	
   end
 
   # runs the player's turn
@@ -165,14 +164,4 @@ class Game < ActiveRecord::Base
   	else
   		return false
   	end
-=======
-  def display_board
->>>>>>> ea92043b6e35cf946580ebfde99d335cf1d3e7d9
   end
-
-  def end_of_turn
-    @turncount += 1
-    self.save
-  end
-
-end

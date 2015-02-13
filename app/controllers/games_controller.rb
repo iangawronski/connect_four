@@ -30,4 +30,5 @@ private
   #   params.require(:game).permit(:users)
   # end
 
+
 end
