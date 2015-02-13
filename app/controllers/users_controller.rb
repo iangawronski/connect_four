@@ -1,14 +1,19 @@
 class UsersController < ApplicationController
-  # before_action :authenticate_users!
-
 
   def index
+    @users = User.all
   end
 
   def create
   end
 
+  def show
+
+  end
+
   def new
+    @user = User.new
+    render :new
   end
 
   def destroy

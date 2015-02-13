@@ -3,9 +3,14 @@ Rails.application.routes.draw do
   get 'home/index'
 
   devise_for :users
-  get 'users/new', to: 'users#new'
+  get '/users/new', to: 'users#new'
+  get '/users/show', to: 'users#show'
   put '/users', to: 'users#create'
+  put '/users/:user_id/games', to: 'find#games', as: 'find_game'
   root to: "users#index"
+
+  resources :games
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

@@ -1,0 +1,19 @@
+<P id="notice"><% notice %></p>
+ <h1> Four Squarez </h1>
+  <p> Below is a list of all users you can request to play!</p>
+  <br>
+  <%= link_to 'Sign Out', destroy_user_session_path, method: :delete %> | <%= link_to 'Go to Your Home Page', users_show_path %>
+  <br>
+  <br>
+  -----------------------------------------------------------------------------
+  <br>
+
+  <ul>
+      <% @users.each do |user| %>
+      <li><%= user.email %></li>
+      <%end%>
+  </ul>
+
+-------------------------------------------------------------------------------
+
+
