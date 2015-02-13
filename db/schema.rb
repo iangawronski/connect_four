@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150212184007) do
+ActiveRecord::Schema.define(version: 20150213145326) do
 
   create_table "games", force: :cascade do |t|
-    t.string   "board"
+    t.text     "board"
     t.integer  "turncount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
