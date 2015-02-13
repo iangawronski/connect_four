@@ -7,22 +7,6 @@ class GamesController < ApplicationController
   end
 
   def new
-<<<<<<< HEAD
-  	
-  end
-
-  def create
-
-  end
-
-  def destroy
-
-  end
-
-  def play
-
-  end
-=======
     @game = Game.new
     render :join
   end
@@ -45,6 +29,6 @@ private
   # def game_params
   #   params.require(:game).permit(:users)
   # end
->>>>>>> ea92043b6e35cf946580ebfde99d335cf1d3e7d9
+
 
 end

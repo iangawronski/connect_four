@@ -6,16 +6,6 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-
-
-  has_many :user_games, foreign_key: "player2_id"
-  has_many :following, through: :relationships, source: :followed
-
-  has_many :reverse_user_games, foreign_key: "player1_id",
-           class_name: "UserGame"
-  has_many :followers, through: :reverse_relationships, source: :follower
-
-
 end
 
 
