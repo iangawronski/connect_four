@@ -7,8 +7,14 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
 
-  def game
-  end
+
+  has_many :user_games, foreign_key: "player2_id"
+  has_many :following, through: :relationships, source: :followed
+
+  has_many :reverse_user_games, foreign_key: "player1_id",
+           class_name: "UserGame"
+  has_many :followers, through: :reverse_relationships, source: :follower
+
 
 end
 

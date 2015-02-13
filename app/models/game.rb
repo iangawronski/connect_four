@@ -16,7 +16,7 @@ class Game < ActiveRecord::Base
   	 		  ['o', 'o', 'o', 'o', 'o', 'o']]
   	@player1 = creating_player.id
   	@i = 0
-  	self.create
+  	#self.create(:board => @board, :turncount => @turncount, )
   end
 
   # do I need to have a display_board method in the model? That sounds like a controller/view job.
@@ -35,7 +35,7 @@ class Game < ActiveRecord::Base
   	end
   	column = pick - 1
   	board[pick-1] = place_piece(board[column], piece)
-  	self.won?(board, column)
+  	if self.won?(board, column)
   	end_of_turn
   end
 
@@ -51,27 +51,26 @@ class Game < ActiveRecord::Base
 
   # runs check horizontal, check_vertical, and check_diagonal methods
   # returns true if there are four in a row in any axis
-  def won?
+  def won?(board, column)
   	row = @i
-
   	# checks the horizontal axis, working left first and then right second 
-  	# if true, returns 
-  	if check_horizontal(board, column, row, match_counter) == true
+  	if check_horizontal(board, column, row) == true
   		return true
   	else
-  		match_counter = 0
-
   		# checks the vertical axis, working down first and then up second
-  		if check_vertical(board, column, row, match_counter) == true
+  		if check_vertical(board, column, row) == true
   			return true
   		else
-  			match_counter = 0
-
-  			# checks the diagonal axis, working down and left first, up and right second
-  			if check_diagonal(board, column, row, match_counter) == true
+  			# checks the diagonal axis running DOWN-LEFT to UP-RIGHT
+  			if check_DL_UR_diagonal(board, column, row) == true
   				return true
   			else
-  				return false
+  				# checks the diagonal axis running DOWN-RIGHT to UP-LEFT
+  				if check_DR_UL_diagonal(board, column, row) == true
+  					return true
+  				else
+  					return false
+  				end
   			end
   		end
   	end
@@ -97,6 +96,7 @@ class Game < ActiveRecord::Base
   	end
   end
 
+  #checks the vertical axis by incrementing rows down first, up second
   def check_vertical(board, column, start_row)
   	match_counter = 0
   	row = start_row
@@ -116,7 +116,8 @@ class Game < ActiveRecord::Base
   	end
   end
 
-  def check_diagonal(board, start_column, start_row)
+  #checks diagonals going down and left (first) and then up and right (second)
+  def check_DL_UR_diagonal(board, start_column, start_row)
   	match_counter = 0
   	column = start_column
   	row = start_row
@@ -138,6 +139,33 @@ class Game < ActiveRecord::Base
   		return false
   	end
   end
+
+  # INVERSE of CHECK_DL_UR_DIAGONAL, goes down and right first, up and left second
+  def check_DR_UL_diagonal(board, start_column, start_row)
+  	match_counter = 0
+  	column = start_column
+  	row = start_row
+  	# goes down and right first (column incremented up, row incremented down)
+  	unless column + 1 < 6 || row - 1 < 0 || board[column][row] != board[column + 1][row - 1] || match_counter == 4
+  		match_counter += 1
+  		column += 1
+  		row -= 1
+  	end
+  	column = start_column
+  	row = start_row
+  	# goes up and left second (column incremented down, row incremented up)
+  	unless column - 1 < 0 || row + 1 > 5 || board[column][row] != board[column - 1][row + 1] || match_counter == 4
+  		match_counter += 1
+  		column -= 1
+  		row += 1
+  	end
+  	if match_counter.size == 4
+  		return true
+  	else
+  		return false
+  	end
+  end
+
 
 
 end
