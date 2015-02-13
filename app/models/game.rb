@@ -166,6 +166,9 @@ class Game < ActiveRecord::Base
   	end
   end
 
-
+  def end_of_turn
+    @turncount += 1
+    self.save
+  end
 
 end
