@@ -12,6 +12,7 @@ class Game < ActiveRecord::Base
   		i += 1
   	end
   	column[i-1] = 'w'
+  	column
   end
 
   def player2_turn(column)
@@ -20,6 +21,7 @@ class Game < ActiveRecord::Base
   		i += 1
   	end
   	column[i-1] = 'b'
+  	column
   end
 
   def won?(board)
