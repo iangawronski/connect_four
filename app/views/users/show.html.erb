@@ -1,5 +1,12 @@
 <p class="notice"><%= notice %></p>
 
-<%= @user.email %>
+<h1> Profile Menu </h1>
+<br>
 
-<%end>
+<p> Username: <%= @user.email %> </p>
+
+ ------------------------------------
+<br>
+<!-- | <%= link_to 'Current Game', games_path(current_user), method: :index %> --> | <%= link_to 'Find Game', find_game_path(current_user) %> |  <%= link_to 'Create New Game', new_game_path(current_user) %> | <%= link_to 'All Games', games_path %>
+
+
