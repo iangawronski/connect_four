@@ -3,9 +3,9 @@ class Game < ActiveRecord::Base
   has_many :users, through: :user_games
   serialize :board
 
+  validates_length_of :users, maximum: 2, message: "can have at most two players."
 
-
-<<<<<<< HEAD
+  # MATT --> we may have to do intialize another way.  Sam was telling me he tried to do it this way, but it wouldn't initialize because of the database.  Not 100% sure what he meant haha
   def initialize(creating_player)
   	@turncount = 0
   	@board = [['o', 'o', 'o', 'o', 'o', 'o'],
@@ -24,7 +24,7 @@ class Game < ActiveRecord::Base
   # perhaps this is used to build how the board is supposed to look and then it hands that to the controller?
   # ASK BRIT!
   def display_board(board)
-  	# TODO: find a way to format the board! 
+  	# TODO: find a way to format the board!
   end
 
   # runs the player's turn
@@ -54,7 +54,7 @@ class Game < ActiveRecord::Base
   # returns true if there are four in a row in any axis
   def won?(board, column)
   	row = @i
-  	# checks the horizontal axis, working left first and then right second 
+  	# checks the horizontal axis, working left first and then right second
   	if check_horizontal(board, column, row) == true
   		return true
   	else
