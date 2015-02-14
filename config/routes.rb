@@ -8,11 +8,14 @@ Rails.application.routes.draw do
   put '/users', to: 'users#create'
   delete '/user/delete', to: 'users#destroy', as: 'delete_user'
   #put '/users/:user_id/games', to: 'find#games', as: 'find_game'
-  put '/users/games', to: 'find#games', as: 'find_game'
+  post '/games', to: 'games#join'
+  put '/games/:id', to: 'games#move'
+  get 'games/:id', to: 'games#show'
+  get '/games', to: 'games#index'
 
   root to: "users#index"
 
-  resources :games
+  # resources :games
 
 
   # The priority is based upon order of creation: first created -> highest priority.
