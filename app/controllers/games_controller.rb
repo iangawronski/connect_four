@@ -23,8 +23,8 @@ class GamesController < ApplicationController
   end
 
   def move
-    if @game.can_move?(current_user)
-      
+    if @game.can_move?(current_user.id)
+
   end
 
   def show_game

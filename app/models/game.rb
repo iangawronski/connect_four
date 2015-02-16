@@ -6,16 +6,24 @@ class Game < ActiveRecord::Base
 
 
   def set_board
-    @board = 
+    @board = [['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o']]
+  end
 
-  def new_game
+  def new_game(game_params)
   	@turncount = 0
     @open = true
     @finished = false
-
+    @player1 = game_params[:user_id]
     # each sub-array is a column, not a row! THIS LAYOUT IS MISLEADING!
-  	@board = 
+  	@board = set_board
   	@i = 0
+    self.save(:turncount => @turncount, :board => @board, :player1_id => @player1.id)
   end
 
   # do I need to have a display_board method in the model? That sounds like a controller/view job.
