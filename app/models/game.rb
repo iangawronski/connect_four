@@ -165,66 +165,6 @@ class Game < ActiveRecord::Base
   	else
   		return false
   	end
-
-  def display_board
-
-  end
-
-  # def end_of_turn
-  #   @turncount += 1
-  #   self.save
-  # end
-
-  ------------------------
-
-
-
-
-
-  def self.contestants(id, number)
-    self.update(id, :players_count => number)
-  end
-
-  def self.add_player2_email(id, email)
-    self.update(id, :player2_email => email)
-  end
-
-  def self.add_to_turncount(id)
-    turns = (self.select('turncount').where(:id => id).limit(1).first.turncount) + 1
-    self.update(id, :turncount => turns)
-  end
-
-  def self.update_board(id, board)
-    self.update(id, :board => board)
-  end
-
-  def can_move?(id, user_email)
-    if self.turn_count.even?
-      user_email == Game.select(:player2_email).where(:id => id).limit(1).first.player2_email
-    else
-      user_email == Game.select(:player1_email).where(:id => id).limit(1).first.player1_email
-    end
-  end
-
-  def self.game_state(game_id)
-    self.select('id, board, turncount').where(:id => game_id)
-  end
-
-  def self.existing_game(player_email)
-    game = self.where("players_count = 2 AND player1_email = '#{player_email}'")
-    if game.empty?
-      game = self.where("players_count 2 AND player2_email = '#{player_email}'")
-    end
-    game
   end
 end
-end
-
-  # def can_move?(user)
-  #   if self.turn_count.even?
-  #     user == self.users.first
-  #   else
-  #     user == self.users.second
-  #   end
-  # end
 
