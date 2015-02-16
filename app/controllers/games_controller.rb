@@ -2,6 +2,7 @@ class GamesController < ApplicationController
   before_action :authenticate_user!, :only => [:join, :move]
 
 
+
   def index
     @games = Game.all
   end
@@ -44,6 +45,19 @@ class GamesController < ApplicationController
           ['o', 'o', 'o', 'o', 'o', 'o', 'o'],
           ['o', 'o', 'o', 'o', 'o', 'o', 'o'],
           ['o', 'o', 'o', 'o', 'o', 'o', 'o']]
+  end
+
+
+  def create
+    @game = Game.new(game_params)
+    @game.save
+  end
+
+  def move
+    if @game.can_move?(current_user.id)
+      @game.player_move(params[:column])
+    end
+
   end
 
 private
