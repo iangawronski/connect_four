@@ -12,7 +12,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.new#(game_params)
+    @game = Game.new(game_params)
     @game.save
   end
 
@@ -31,10 +31,9 @@ private
     @user = Users.find(current_user)
   end
 
-
-  # def game_params
-  #   params.require(:game).permit(:users)
-  # end
+  def game_params
+    params.require(:game).permit(:users)
+  end
 
 
 end
