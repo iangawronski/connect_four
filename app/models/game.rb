@@ -3,7 +3,25 @@ class Game < ActiveRecord::Base
   has_many :users, through: :user_games
   serialize :board
 
+   INITIAL_BOARD = [[0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0]]
 
+  validates_length_of :users, maximum: 2, message: "can have at most two players."
+
+  def self.waiting
+    Game.where(:user_games_count => 1)
+  end
+
+  def self.active
+    Game.where(:finished => false)
+  end
+
+  def new_board!
+    self.update_attribute :board, INITIAL_BOARD
 
   # def set_board
   #   @board = [['o', 'o', 'o', 'o', 'o', 'o'],
@@ -72,10 +90,21 @@ class Game < ActiveRecord::Base
       end
   	  end_of_turn
     end
-    else
-      redirect_to :index
-    end
   end
+
+  # runs the player's turn
+  # def player_turn(pick, board, player_type)
+  # 	if player_type == player1
+  # 		piece = 'R'
+  # 	else
+  # 		piece = 'B'
+  # 	end
+  # 	column = pick - 1
+  # 	board[pick-1] = place_piece(board[column], piece)
+  # 	if self.won?(board, column)
+  # 	end_of_turn
+  #   end
+  # end
 
   # places piece in the lowest available space in the chosen column
   def place_piece(column, piece)
@@ -95,7 +124,7 @@ class Game < ActiveRecord::Base
   # returns true if there are four in a row in any axis
   def won?(board, column)
   	row = @i
-  	# checks the horizontal axis, working left first and then right second 
+  	# checks the horizontal axis, working left first and then right second
   	if check_horizontal(board, column, row) == true
   		return true
   	elsif check_vertical(board, column, row) == true
@@ -213,4 +242,6 @@ class Game < ActiveRecord::Base
     self.update(:turncount => @turncount, :board => @board)
   end
 
+
 end
+
