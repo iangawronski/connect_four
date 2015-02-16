@@ -19,7 +19,6 @@ class Game < ActiveRecord::Base
   	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
   	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
   	 		      ['o', 'o', 'o', 'o', 'o', 'o']]
-  	@player1 = creating_player.id
   	@i = 0
   	self.create(:board => @board, :turncount => @turncount, )
   end
@@ -30,7 +29,7 @@ class Game < ActiveRecord::Base
   def display_board(board)
   	# TODO: find a way to format the board! 
 
-    puts "
+    "
 
       #{board[0][0]} | #{board[1][0]} | #{board[2][0]} | #{board[3][0]} | #{board[4][0]} | #{board[5][0]} | #{board[6][0]}
       __________________________________
@@ -64,6 +63,8 @@ class Game < ActiveRecord::Base
     @open = false
   end
 
+
+
   # runs the player's turn
   def player_turn(pick, board)
   	if turncount.odd?
@@ -74,7 +75,7 @@ class Game < ActiveRecord::Base
   	column = pick - 1
   	board[pick-1] = place_piece(board[column], piece)
   	if self.won?(board, column)
-      game.finished
+      game.finished!
     end
   	end_of_turn
   end
@@ -195,10 +196,6 @@ class Game < ActiveRecord::Base
   	else
   		return false
   	end
-  end
-
-  def display_board
-    puts " "
   end
 
   def end_of_turn
