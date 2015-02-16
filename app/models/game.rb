@@ -12,8 +12,6 @@ class Game < ActiveRecord::Base
 
   validates_length_of :users, maximum: 2, message: "can have at most two players."
 
-  # MATT --> we may have to do intialize another way.  Sam was telling me he tried to do it this way, but it wouldn't initialize because of the database.  Not 100% sure what he meant haha
-
   def self.waiting
     Game.where(:user_games_count => 1)
   end
