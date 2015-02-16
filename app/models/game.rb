@@ -23,15 +23,15 @@ class Game < ActiveRecord::Base
   def new_board!
     self.update_attribute :board, INITIAL_BOARD
 
-  # def set_board
-  #   @board = [['o', 'o', 'o', 'o', 'o', 'o'],
-  #             ['o', 'o', 'o', 'o', 'o', 'o'],
-  #             ['o', 'o', 'o', 'o', 'o', 'o'],
-  #             ['o', 'o', 'o', 'o', 'o', 'o'],
-  #             ['o', 'o', 'o', 'o', 'o', 'o'],
-  #             ['o', 'o', 'o', 'o', 'o', 'o'],
-  #             ['o', 'o', 'o', 'o', 'o', 'o']]
-  # end
+  def set_board
+    @board = [['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o'],
+              ['o', 'o', 'o', 'o', 'o', 'o']]
+  end
 
   # def new_game(game_params)
   # 	@turncount = 0
@@ -71,7 +71,7 @@ class Game < ActiveRecord::Base
 
 
   # runs the player's turn
-  def player_move(params[:column])
+  def player_move(column, board)
     if !self.finished
   	  if turncount.odd?
   		  piece = 'R'
@@ -81,7 +81,7 @@ class Game < ActiveRecord::Base
   	  if board[column][0] == 'o' 
         board[pick-1] = place_piece(board[column], piece)
       else
-        redirect_to :show, notice: "That column is already full!"
+        
       end
 
   	  if self.finished?(board, column)
