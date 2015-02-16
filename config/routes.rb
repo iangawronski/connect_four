@@ -4,15 +4,14 @@ Rails.application.routes.draw do
 
   devise_for :users
   get '/users/new', to: 'users#new'
-  get '/users/show', to: 'users#show'
+  get '/users/:id', to: 'users#show', as: 'users_show'
   put '/users', to: 'users#create'
   delete '/user/delete', to: 'users#destroy', as: 'delete_user'
   #put '/users/:user_id/games', to: 'find#games', as: 'find_game'
-  post '/games', to: 'games#join'
-  put '/games/:id', to: 'games#move'
-  get 'games/:id', to: 'games#show'
+  post '/games', to: 'games#join', as: 'games_join'
+  put '/games/:id', to: 'games#move', as: 'game'
+  get 'games/:id', to: 'games#show', as: 'game_show'
   get '/games', to: 'games#index'
-
   root to: "users#index"
 
   # resources :games
