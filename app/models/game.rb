@@ -5,56 +5,25 @@ class Game < ActiveRecord::Base
 
 
 
-  def set_board
-    @board = [['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o']]
-  end
+  # def set_board
+  #   @board = [['o', 'o', 'o', 'o', 'o', 'o'],
+  #             ['o', 'o', 'o', 'o', 'o', 'o'],
+  #             ['o', 'o', 'o', 'o', 'o', 'o'],
+  #             ['o', 'o', 'o', 'o', 'o', 'o'],
+  #             ['o', 'o', 'o', 'o', 'o', 'o'],
+  #             ['o', 'o', 'o', 'o', 'o', 'o'],
+  #             ['o', 'o', 'o', 'o', 'o', 'o']]
+  # end
 
-  def new_game(game_params)
-  	@turncount = 0
-    @open = true
-    @finished = false
-    @player1 = game_params[:user_id]
-    # each sub-array is a column, not a row! THIS LAYOUT IS MISLEADING!
-  	@board = set_board
-  	@i = 0
-    self.save(:turncount => @turncount, :board => @board, :player1_id => @player1.id)
-  end
-
-  # do I need to have a display_board method in the model? That sounds like a controller/view job.
-  # perhaps this is used to build how the board is supposed to look and then it hands that to the controller?
-  # ASK BRIT!
-
-
-  # def display_board(board)
-  # 	# TODO: find a way to format the board! 
-
-  #   "
-
-  #     #{board[0][0]} | #{board[1][0]} | #{board[2][0]} | #{board[3][0]} | #{board[4][0]} | #{board[5][0]} | #{board[6][0]}
-  #     __________________________________
-
-  #     #{board[0][1]} | #{board[1][1]} | #{board[2][1]} | #{board[3][1]} | #{board[4][1]} | #{board[5][1]} | #{board[6][1]}
-  #     __________________________________
-
-  #     #{board[0][2]} | #{board[1][2]} | #{board[2][2]} | #{board[3][2]} | #{board[4][2]} | #{board[5][2]} | #{board[6][2]}
-  #     __________________________________
-
-  #     #{board[0][3]} | #{board[1][3]} | #{board[2][3]} | #{board[3][3]} | #{board[4][3]} | #{board[5][3]} | #{board[6][3]}
-  #     __________________________________
-
-  #     #{board[0][4]} | #{board[1][4]} | #{board[2][4]} | #{board[3][4]} | #{board[4][4]} | #{board[5][4]} | #{board[6][4]}
-  #     __________________________________
-
-  #     #{board[0][5]} | #{board[1][5]} | #{board[2][5]} | #{board[3][5]} | #{board[4][5]} | #{board[5][5]} | #{board[6][5]}
-
-
-  #   "
+  # def new_game(game_params)
+  # 	@turncount = 0
+  #   @open = true
+  #   @finished = false
+  #   @player1 = game_params[:user_id]
+  #   # each sub-array is a column, not a row! THIS LAYOUT IS MISLEADING!
+  # 	@board = set_board
+  # 	@i = 0
+  #   self.save(:turncount => @turncount, :board => @board, :player1_id => @player1.id)
   # end
 
 
@@ -68,6 +37,9 @@ class Game < ActiveRecord::Base
     false
   end
 
+
+
+
   def can_move?(current_user)
     if current_user.id == self.users.first && self.turncount.odd?
       true
@@ -77,23 +49,32 @@ class Game < ActiveRecord::Base
   end
 
 
-  # runs the player's turn
-  def player_turn(pick, board)
-    if !self.finished
-  	if turncount.odd?
-  		piece = 'R'
-  	else
-  		piece = 'B'
-  	end
-  	column = pick - 1
-  	if board[column][0] == 'o' 
-      board[pick-1] = place_piece(board[column], piece)
-    else
 
-  	if self.finished?(board, column)
-      game.finished!
+
+
+  # runs the player's turn
+  def player_move(params[:column])
+    if !self.finished
+  	  if turncount.odd?
+  		  piece = 'R'
+  	  else
+  		  piece = 'B'
+    	end
+  	  if board[column][0] == 'o' 
+        board[pick-1] = place_piece(board[column], piece)
+      else
+        redirect_to :show, notice: "That column is already full!"
+      end
+
+  	  if self.finished?(board, column)
+        game.finished!
+        break
+      end
+  	  end_of_turn
     end
-  	end_of_turn
+    else
+      redirect_to :index
+    end
   end
 
   # places piece in the lowest available space in the chosen column
@@ -148,7 +129,8 @@ class Game < ActiveRecord::Base
   	end
   end
 
-  #checks the vertical axis by incrementing rows down first, up second
+  # checks the vertical axis by incrementing rows UP first, DOWN second
+  # incrementing 'row' UP moves the checker DOWN
   def check_vertical(board, column, start_row)
   	match_counter = 0
   	row = start_row
@@ -169,7 +151,7 @@ class Game < ActiveRecord::Base
   end
 
   #checks diagonals going down and left (first) and then up and right (second)
-  def check_DL_UR_diagonal(board, start_column, start_row)
+  def check_DR_UL_diagonal(board, start_column, start_row)
   	match_counter = 0
   	column = start_column
   	row = start_row
@@ -192,8 +174,8 @@ class Game < ActiveRecord::Base
   	end
   end
 
-  # INVERSE of CHECK_DL_UR_DIAGONAL, goes down and right first, up and left second
-  def check_DR_UL_diagonal(board, start_column, start_row)
+  # INVERSE of CHECK_DR_UL_DIAGONAL, goes up and right first, down and left second
+  def check_DL_UR_diagonal(board, start_column, start_row)
   	match_counter = 0
   	column = start_column
   	row = start_row

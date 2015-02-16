@@ -24,6 +24,7 @@ class GamesController < ApplicationController
 
   def move
     if @game.can_move?(current_user.id)
+      @game.player_move(params[:column])
 
   end
 
@@ -38,10 +39,6 @@ private
 
   def set_user
     @user = Users.find(current_user)
-  end
-
-  def game_params
-    params.require(:game).permit(:user_id)
   end
 
   def set_board
