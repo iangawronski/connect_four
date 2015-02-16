@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
   before_action :set_user
+  before_action :set_game, only: [:join, :move, :show_game]
 
 
   def index
@@ -21,6 +22,14 @@ class GamesController < ApplicationController
     @game.player2 = current_user.id
   end
 
+  def move
+    if @game.can_move?(current_user)
+      
+  end
+
+  def show_game
+
+  end
 private
 
   def set_game
@@ -32,8 +41,14 @@ private
   end
 
   def game_params
-    params.require(:game).permit(:users)
+    params.require(:game).permit(:user_id)
   end
+
+  def set_board
+    if params[:id]
+      @game = set_game
+      @board = @game.board
+    else
 
 
 end

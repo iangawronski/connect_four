@@ -5,6 +5,8 @@ class Game < ActiveRecord::Base
 
 
 
+  def set_board
+    @board = 
 
   def new_game
   	@turncount = 0
@@ -12,69 +14,75 @@ class Game < ActiveRecord::Base
     @finished = false
 
     # each sub-array is a column, not a row! THIS LAYOUT IS MISLEADING!
-  	@board = [['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		      ['o', 'o', 'o', 'o', 'o', 'o']]
+  	@board = 
   	@i = 0
-  	self.create(:board => @board, :turncount => @turncount)
   end
 
   # do I need to have a display_board method in the model? That sounds like a controller/view job.
   # perhaps this is used to build how the board is supposed to look and then it hands that to the controller?
   # ASK BRIT!
-  def display_board(board)
-  	# TODO: find a way to format the board! 
-
-    "
-
-      #{board[0][0]} | #{board[1][0]} | #{board[2][0]} | #{board[3][0]} | #{board[4][0]} | #{board[5][0]} | #{board[6][0]}
-      __________________________________
-
-      #{board[0][1]} | #{board[1][1]} | #{board[2][1]} | #{board[3][1]} | #{board[4][1]} | #{board[5][1]} | #{board[6][1]}
-      __________________________________
-
-      #{board[0][2]} | #{board[1][2]} | #{board[2][2]} | #{board[3][2]} | #{board[4][2]} | #{board[5][2]} | #{board[6][2]}
-      __________________________________
-
-      #{board[0][3]} | #{board[1][3]} | #{board[2][3]} | #{board[3][3]} | #{board[4][3]} | #{board[5][3]} | #{board[6][3]}
-      __________________________________
-
-      #{board[0][4]} | #{board[1][4]} | #{board[2][4]} | #{board[3][4]} | #{board[4][4]} | #{board[5][4]} | #{board[6][4]}
-      __________________________________
-
-      #{board[0][5]} | #{board[1][5]} | #{board[2][5]} | #{board[3][5]} | #{board[4][5]} | #{board[5][5]} | #{board[6][5]}
 
 
-    "
-  end
+  # def display_board(board)
+  # 	# TODO: find a way to format the board! 
+
+  #   "
+
+  #     #{board[0][0]} | #{board[1][0]} | #{board[2][0]} | #{board[3][0]} | #{board[4][0]} | #{board[5][0]} | #{board[6][0]}
+  #     __________________________________
+
+  #     #{board[0][1]} | #{board[1][1]} | #{board[2][1]} | #{board[3][1]} | #{board[4][1]} | #{board[5][1]} | #{board[6][1]}
+  #     __________________________________
+
+  #     #{board[0][2]} | #{board[1][2]} | #{board[2][2]} | #{board[3][2]} | #{board[4][2]} | #{board[5][2]} | #{board[6][2]}
+  #     __________________________________
+
+  #     #{board[0][3]} | #{board[1][3]} | #{board[2][3]} | #{board[3][3]} | #{board[4][3]} | #{board[5][3]} | #{board[6][3]}
+  #     __________________________________
+
+  #     #{board[0][4]} | #{board[1][4]} | #{board[2][4]} | #{board[3][4]} | #{board[4][4]} | #{board[5][4]} | #{board[6][4]}
+  #     __________________________________
+
+  #     #{board[0][5]} | #{board[1][5]} | #{board[2][5]} | #{board[3][5]} | #{board[4][5]} | #{board[5][5]} | #{board[6][5]}
+
+
+  #   "
+  # end
 
 
   # sets the game state to finished
   def finished!
-    @finished = true
+    true
   end
 
   # sets game state to closed (happens when player 2's position is filled! Game will not be initialized until player 2 is found)
   def closeGame!
-    @open = false
+    false
   end
 
+  def can_move?(current_user)
+    if current_user.id == self.users.first && self.turncount.odd?
+      true
+    else
+      false
+    end
+  end
 
 
   # runs the player's turn
   def player_turn(pick, board)
+    if !self.finished
   	if turncount.odd?
   		piece = 'R'
   	else
   		piece = 'B'
   	end
   	column = pick - 1
-  	board[pick-1] = place_piece(board[column], piece)
-  	if self.won?(board, column)
+  	if board[column][0] == 'o' 
+      board[pick-1] = place_piece(board[column], piece)
+    else
+
+  	if self.finished?(board, column)
       game.finished!
     end
   	end_of_turn
@@ -89,6 +97,10 @@ class Game < ActiveRecord::Base
   	column[@i-1] = piece
   	column
   end
+
+
+
+
 
   # runs check horizontal, check_vertical, and check_diagonal methods
   # returns true if there are four in a row in any axis
@@ -198,9 +210,17 @@ class Game < ActiveRecord::Base
   	end
   end
 
+  def finished?
+    if self.won?(board, column) || @turncount == 42
+      self.finished!
+    end
+  end
+
+
+
   def end_of_turn
     @turncount += 1
-    self.save
+    self.update(:turncount => @turncount, :board => @board)
   end
 
 end
