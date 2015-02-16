@@ -5,6 +5,12 @@
 
 <p> Username: <%= @user.email %> </p>
 
+<ul>
+  <% @user.games.each do |g| %>
+    <li><%= link_to "Game #{g.id}", game_path(g) %></li>
+  <% end %>
+</ul>
+
  ------------------------------------
 <br>
 <%= link_to 'Join or Create Game', games_join_path, method: :post %> |
