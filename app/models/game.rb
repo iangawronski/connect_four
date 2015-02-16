@@ -6,7 +6,7 @@ class Game < ActiveRecord::Base
 
 
 
-  def initialize
+  def new_game
   	@turncount = 0
     @open = true
     @finished = false
@@ -20,7 +20,7 @@ class Game < ActiveRecord::Base
   	 		      ['o', 'o', 'o', 'o', 'o', 'o'],
   	 		      ['o', 'o', 'o', 'o', 'o', 'o']]
   	@i = 0
-  	self.create(:board => @board, :turncount => @turncount, )
+  	self.create(:board => @board, :turncount => @turncount)
   end
 
   # do I need to have a display_board method in the model? That sounds like a controller/view job.
@@ -132,12 +132,12 @@ class Game < ActiveRecord::Base
   def check_vertical(board, column, start_row)
   	match_counter = 0
   	row = start_row
-  	unless row - 1 < 0 || board[column][row] != board[column][row - 1] || match_counter == 3
+  	while row - 1 > 0 && board[column][row] == board[column][row - 1] && match_counter < 3
   		match_counter += 1
   		row -= 1
   	end
   	row = start_row
-  	unless row + 1 > 5 || board[column][row] != board[column][row + 1] || match_counter == 3
+  	while row + 1 < 5 && board[column][row] == board[column][row + 1] && match_counter < 3
   		match_counter += 1
   		row += 1
   	end
@@ -153,14 +153,14 @@ class Game < ActiveRecord::Base
   	match_counter = 0
   	column = start_column
   	row = start_row
-  	unless column - 1 < 0 || row - 1 < 0 || board[column][row] != board[column - 1][row - 1] || match_counter == 3
+  	while column - 1 > 0 && row - 1 > 0 && board[column][row] == board[column - 1][row - 1] && match_counter < 3
   		match_counter += 1
   		column -= 1
   		row -= 1
   	end
   	column = start_column
   	row = start_row
-  	unless column + 1 > 6 || row + 1 > 5 || board[column][row] != board[column + 1][row + 1] || match_counter == 3
+  	while column + 1 < 6 && row + 1 < 5 && board[column][row] == board[column + 1][row + 1] && match_counter < 3
   		match_counter += 1
   		column += 1
   		row += 1
@@ -178,7 +178,7 @@ class Game < ActiveRecord::Base
   	column = start_column
   	row = start_row
   	# goes down and right first (column incremented up, row incremented down)
-  	unless column + 1 < 6 || row - 1 < 0 || board[column][row] != board[column + 1][row - 1] || match_counter == 3
+  	while column + 1 < 6 && row - 1 > 0 && board[column][row] == board[column + 1][row - 1] && match_counter < 3
   		match_counter += 1
   		column += 1
   		row -= 1
@@ -186,7 +186,7 @@ class Game < ActiveRecord::Base
   	column = start_column
   	row = start_row
   	# goes up and left second (column incremented down, row incremented up)
-  	unless column - 1 < 0 || row + 1 > 5 || board[column][row] != board[column - 1][row + 1] || match_counter == 3
+  	while column - 1 > 0 && row + 1 < 5 && board[column][row] == board[column - 1][row + 1] && match_counter < 3
   		match_counter += 1
   		column -= 1
   		row += 1
