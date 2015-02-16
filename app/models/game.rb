@@ -3,42 +3,40 @@ class Game < ActiveRecord::Base
   has_many :users, through: :user_games
   serialize :board
 
+   INITIAL_BOARD = [[0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0]]
+
   validates_length_of :users, maximum: 2, message: "can have at most two players."
 
-  # MATT --> we may have to do intialize another way.  Sam was telling me he tried to do it this way, but it wouldn't initialize because of the database.  Not 100% sure what he meant haha
-  def initialize(creating_player)
-  	@turncount = 0
-  	@board = [['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		  ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		  ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		  ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		  ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		  ['o', 'o', 'o', 'o', 'o', 'o'],
-  	 		  ['o', 'o', 'o', 'o', 'o', 'o']]
-  	@player1 = creating_player.id
-  	@i = 0
-  	#self.create(:board => @board, :turncount => @turncount, )
+  def self.waiting
+    Game.where(:user_games_count => 1)
   end
 
-  # do I need to have a display_board method in the model? That sounds like a controller/view job.
-  # perhaps this is used to build how the board is supposed to look and then it hands that to the controller?
-  # ASK BRIT!
-  def display_board(board)
-  	# TODO: find a way to format the board!
+  def self.active
+    Game.where(:finished => false)
+  end
+
+  def new_board!
+    self.update_attribute :board, INITIAL_BOARD
   end
 
   # runs the player's turn
-  def player_turn(pick, board, player_type)
-  	if player_type == player1
-  		piece = 'R'
-  	else
-  		piece = 'B'
-  	end
-  	column = pick - 1
-  	board[pick-1] = place_piece(board[column], piece)
-  	if self.won?(board, column)
-  	end_of_turn
-  end
+  # def player_turn(pick, board, player_type)
+  # 	if player_type == player1
+  # 		piece = 'R'
+  # 	else
+  # 		piece = 'B'
+  # 	end
+  # 	column = pick - 1
+  # 	board[pick-1] = place_piece(board[column], piece)
+  # 	if self.won?(board, column)
+  # 	end_of_turn
+  #   end
+  # end
 
   # places piece in the lowest available space in the chosen column
   def place_piece(column, piece)
@@ -165,14 +163,6 @@ class Game < ActiveRecord::Base
   	else
   		return false
   	end
-=======
-  def display_board
->>>>>>> ea92043b6e35cf946580ebfde99d335cf1d3e7d9
   end
-
-  def end_of_turn
-    @turncount += 1
-    self.save
-  end
-
 end
+
