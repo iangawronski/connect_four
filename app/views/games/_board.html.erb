@@ -8,7 +8,13 @@
     <% 0.upto(5) do |col| %>
       <tr>
         <% 7.times do |row| %>
-         <td class=""><%= board[row][col] %></td>
+         <td class=""><% if board[row][col] == 'R' %>
+                        <%= image_tag "corvettepiece.png", class: "piece" %></td>
+                      <% elsif board[row][col] == 'B' %>
+                        <%= image_tag "whitecorvette.png", class: "piece" %></td>
+                      <% else %>
+                        <%= image_tag "whitecircle.png", class: "piece" %></td>
+                      <% end %>
         <% end %>
       </tr>
     <%end%>

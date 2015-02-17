@@ -1,8 +1,8 @@
 <h1><%= "Game Number: #{@game.id}" %></h1>
 
-<h2>Welcome back, <%= link_to @player1.email, users_show_path(@player1) %>!</h2>
+<h2>Welcome back, <%= link_to @player1.email, users_show_path(@player1) %>! You are the white Corvette logo!</h2>
 <% if @player2 %>
-    <h2>Welcome back, <%= link_to @player2.email, users_show_path(@player2) %>!</h2>
+    <h2>Welcome back, <%= link_to @player2.email, users_show_path(@player2) %>! You are the black Corvette logo!</h2>
 <% end %>
 
 <%= render "board", board: @game.board%>
