@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
   before_action :authenticate_user!, :only => [:join, :move]
+  before_action :set_game, :only => [:show, :move]
 
 
   def index
@@ -37,14 +38,24 @@ class GamesController < ApplicationController
     @player2 = @game.users.second
   end
 
-  def set_board
-    @board = [['o', 'o', 'o', 'o', 'o', 'o', 'o'],
-          ['o', 'o', 'o', 'o', 'o', 'o', 'o'],
-          ['o', 'o', 'o', 'o', 'o', 'o', 'o'],
-          ['o', 'o', 'o', 'o', 'o', 'o', 'o'],
-          ['o', 'o', 'o', 'o', 'o', 'o', 'o'],
-          ['o', 'o', 'o', 'o', 'o', 'o', 'o']]
+  def move
+    #if !@game.finished?
+      @game.player_move(params[:column], current_user)
+      redirect_to game_show_path(@game)
+    #else
+      #redirect_to users_show_path(current_user)
+    #end
   end
+
+  # def move
+  #   if @game.can_move?(current_user)
+  #     @game.player_move(params[:column])
+  #     redirect_to game_show(@game)
+  #   else
+  #     redirect_to game_show(@game), notice: "It isn't your turn!"
+  #   end
+
+  # end
 
 private
 
@@ -52,5 +63,8 @@ private
     params.require(:game).permit(:users, :current_player, :id)
   end
 
+  def set_game
+    @game = Game.find(params[:id])
+  end
 
 end

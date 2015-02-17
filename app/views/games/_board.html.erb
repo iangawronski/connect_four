@@ -2,16 +2,22 @@
   <table class = "tftable" border="1">
       <tr>
         <% [*0..6].each do |n| %>
-            <td><%= button_to "#{n + 1}", "/games/#{n + 1}", params: { :column => n }, :method => :put %></td>
+            <td><%= button_to "#{n + 1}", "/games/#{@game.id}", params: { :column => n }, :method => :put %></td>
         <% end %>
       </tr>
-    <% 5.downto(0) do |row| %>
-    <tr>
-      <% 7.times do |col| %>
-        <td class=""><%= board[row][col] %></td>
-      <% end %>
-    </tr>
-  <%end%>
+    <% 0.upto(5) do |col| %>
+      <tr>
+        <% 7.times do |row| %>
+         <td class=""><% if board[row][col] == 'R' %>
+                        <%= image_tag "corvettepiece.png", class: "piece" %></td>
+                      <% elsif board[row][col] == 'B' %>
+                        <%= image_tag "whitecorvette.png", class: "piece" %></td>
+                      <% else %>
+                        <%= image_tag "whitecircle.png", class: "piece" %></td>
+                      <% end %>
+        <% end %>
+      </tr>
+    <%end%>
   </table>
 </div>
 
