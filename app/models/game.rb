@@ -24,6 +24,7 @@ class Game < ActiveRecord::Base
   def new_board!
     self.board = INITIAL_BOARD
     self.turncount = 1
+    binding.pry
     self.save
   end
 
@@ -53,7 +54,7 @@ class Game < ActiveRecord::Base
 
 
   def can_move?(current_user)
-    binding.pry
+    #binding.pry
     (current_user == self.users.first && self.turncount.odd?) || (current_user == self.users.second && self.turncount.even?)
   end
 
@@ -63,20 +64,17 @@ class Game < ActiveRecord::Base
 
   # runs the player's turn
   def player_move(column, current_user)
-    @col = column.to_i
     if can_move?(current_user)
+      @col = column.to_i
   	  if turncount.odd?
   		  piece = 'R'
   	  else
   		  piece = 'B'
     	end
-  	  if board[col][0] == 'o' 
-        board[col] = place_piece(board[col], piece)
+  	  if board[@col][0] == 0 
+        board[@col] = place_piece(@col, piece)
       end
-  	  if self.finished?
-        game.finished!
-        #break
-      end
+  	  #self.won?(board)
   	  end_of_turn
     end
   end
@@ -97,9 +95,11 @@ class Game < ActiveRecord::Base
 
   # places piece in the lowest available space in the chosen column
   def place_piece(column, piece)
-  	@i = 0
-  	counter += 1 while self.board[column][counter] == 0
-  	self.board[column][@i-1] = piece
+    #binding.pry
+  	@counter = 0
+    #binding.pry
+  	@counter += 1 while self.board[column][@counter] == 0
+  	self.board[column][@counter-1] = piece
   	self.board[column]
   end
 
@@ -117,7 +117,8 @@ class Game < ActiveRecord::Base
   # runs check horizontal, check_vertical, and check_diagonal methods
   # returns true if there are four in a row in any axis
   def won?(board)
-  	row = @i
+    binding.pry
+  	row = @counter
     column = @col
   	# checks the horizontal axis, working left first and then right second
   	if check_horizontal(board, column, row)
@@ -137,12 +138,14 @@ class Game < ActiveRecord::Base
   def check_horizontal(board, start_column, row)
   	match_counter = 0
   	column = start_column
-  	while column - 1 > 0 && board[column][row] == board[column - 1][row] && match_counter < 3
+    binding.pry
+  	while (column - 1 > 0) && (board[column][row] == board[column - 1][row]) && (match_counter < 3)
   		match_counter += 1
   		column -= 1
   	end
   	column = start_column
-  	while column + 1 < 6 || board[column][row] == board[column + 1][row] && match_counter < 3
+  	while (column + 1 < 6) && (board[column][row] == board[column + 1][row]) && (match_counter < 3)
+      #binding.pry
   		match_counter += 1
   		column += 1
   	end
@@ -158,12 +161,12 @@ class Game < ActiveRecord::Base
   def check_vertical(board, column, start_row)
   	match_counter = 0
   	row = start_row
-  	while row - 1 > 0 && board[column][row] == board[column][row - 1] && match_counter < 3
+  	while (row - 1 > 0) && (board[column][row] == board[column][row - 1]) && (match_counter < 3)
   		match_counter += 1
   		row -= 1
   	end
   	row = start_row
-  	while row + 1 < 5 && board[column][row] == board[column][row + 1] && match_counter < 3
+  	while (row + 1 < 5) && (board[column][row] == board[column][row + 1]) && (match_counter < 3)
   		match_counter += 1
   		row += 1
   	end
@@ -179,7 +182,7 @@ class Game < ActiveRecord::Base
   	match_counter = 0
   	column = start_column
   	row = start_row
-  	while column - 1 > 0 && row - 1 > 0 && board[column][row] == board[column - 1][row - 1] && match_counter < 3
+  	while (column - 1 > 0) && (row - 1 > 0) && (board[column][row] == board[column - 1][row - 1]) && (match_counter < 3)
   		match_counter += 1
   		column -= 1
   		row -= 1
@@ -225,16 +228,19 @@ class Game < ActiveRecord::Base
   end
 
   def finished?
+    #binding.pry
     if self.won?(board) || @turncount == 42
-      self.finished!
+      #binding.pry
+      self.update_attribute(:finished => self.finished!)
     end
   end
 
 
 
   def end_of_turn
-    @turncount += 1
-    self.update(:turncount => @turncount, :board => @board)
+    #binding.pry
+    self.turncount += 1
+    self.save
   end
 
 

@@ -39,8 +39,12 @@ class GamesController < ApplicationController
   end
 
   def move
-    @game.player_move_test(params[:column], current_user)
-    redirect_to game_show_path(@game)
+    if !@game.finished?
+      @game.player_move(params[:column], current_user)
+      redirect_to game_show_path(@game)
+    else
+      redirect_to users_show_path(current_user)
+    end
   end
 
   # def move
