@@ -3,12 +3,13 @@ class Game < ActiveRecord::Base
   has_many :users, through: :user_games
   serialize :board
 
-   INITIAL_BOARD = [[0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0]]
+  INITIAL_BOARD = [[0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0]]
 
   validates_length_of :users, maximum: 2, message: "can have at most two players."
 
@@ -21,16 +22,9 @@ class Game < ActiveRecord::Base
   end
 
   def new_board!
-    self.update_attribute :board, INITIAL_BOARD
-
-  def set_board
-    @board = [['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o'],
-              ['o', 'o', 'o', 'o', 'o', 'o']]
+    self.board = INITIAL_BOARD
+    self.turncount = 1
+    self.save
   end
 
   # def new_game(game_params)
@@ -59,11 +53,8 @@ class Game < ActiveRecord::Base
 
 
   def can_move?(current_user)
-    if current_user.id == self.users.first && self.turncount.odd?
-      true
-    else
-      false
-    end
+    binding.pry
+    (current_user == self.users.first && self.turncount.odd?) || (current_user == self.users.second && self.turncount.even?)
   end
 
 
@@ -71,22 +62,20 @@ class Game < ActiveRecord::Base
 
 
   # runs the player's turn
-  def player_move(column, board)
-    if !self.finished
+  def player_move(column, current_user)
+    @col = column.to_i
+    if can_move?(current_user)
   	  if turncount.odd?
   		  piece = 'R'
   	  else
   		  piece = 'B'
     	end
-  	  if board[column][0] == 'o' 
-        board[pick-1] = place_piece(board[column], piece)
-      else
-        
+  	  if board[col][0] == 'o' 
+        board[col] = place_piece(board[col], piece)
       end
-
-  	  if self.finished?(board, column)
+  	  if self.finished?
         game.finished!
-        break
+        #break
       end
   	  end_of_turn
     end
@@ -109,29 +98,37 @@ class Game < ActiveRecord::Base
   # places piece in the lowest available space in the chosen column
   def place_piece(column, piece)
   	@i = 0
-  	until column[@i] == 'R' || column[@i] == 'B' || column[@i] == nil
+  	while self.board[column][@i] == 'o'
   		@i += 1
   	end
-  	column[@i-1] = piece
-  	column
+  	self.board[column][@i-1] = piece
+  	self.board[column]
   end
 
+  def player_move_test(column, current_user)
+    @col = column.to_i
+    binding.pry
+    self.board[@col] = place_piece(@col, 'T')
+    binding.pry
+    self.save
+  end
 
 
 
 
   # runs check horizontal, check_vertical, and check_diagonal methods
   # returns true if there are four in a row in any axis
-  def won?(board, column)
+  def won?(board)
   	row = @i
+    column = @col
   	# checks the horizontal axis, working left first and then right second
-  	if check_horizontal(board, column, row) == true
+  	if check_horizontal(board, column, row)
   		return true
-  	elsif check_vertical(board, column, row) == true
+  	elsif check_vertical(board, column, row)
       return true
-    elsif check_DL_UR_diagonal(board, column, row) == true
+    elsif check_DL_UR_diagonal(board, column, row)
       return true
-    elsif check_DR_UL_diagonal(board, column, row) == true
+    elsif check_DR_UL_diagonal(board, column, row)
       return true
     else
       return false
@@ -230,7 +227,7 @@ class Game < ActiveRecord::Base
   end
 
   def finished?
-    if self.won?(board, column) || @turncount == 42
+    if self.won?(board) || @turncount == 42
       self.finished!
     end
   end
