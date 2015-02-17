@@ -98,18 +98,16 @@ class Game < ActiveRecord::Base
   # places piece in the lowest available space in the chosen column
   def place_piece(column, piece)
   	@i = 0
-  	while self.board[column][@i] == 'o'
-  		@i += 1
-  	end
+  	counter += 1 while self.board[column][counter] == 0
   	self.board[column][@i-1] = piece
   	self.board[column]
   end
 
   def player_move_test(column, current_user)
     @col = column.to_i
-    binding.pry
+    #binding.pry
     self.board[@col] = place_piece(@col, 'T')
-    binding.pry
+    #binding.pry
     self.save
   end
 
